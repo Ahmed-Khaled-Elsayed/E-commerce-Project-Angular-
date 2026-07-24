@@ -1,1 +1,76 @@
-<p>register works!</p>
+<section class="auth-shell">
+  <div class="auth-card">
+    <div class="text-center mb-8">
+      <p class="text-sm font-semibold uppercase tracking-[0.3em] text-blue-600">Create account</p>
+      <h1 class="mt-3 text-3xl font-semibold text-slate-900">Join LuxeCart</h1>
+      <p class="mt-2 text-sm text-slate-600">Start building your wishlist and enjoy faster checkout on every order.</p>
+    </div>
+
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="space-y-5">
+      <div *ngIf="errorMessage" class="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
+        {{ errorMessage }}
+      </div>
+      <div>
+        <label for="name" class="mb-2 block text-sm font-medium text-slate-700">Full name</label>
+        <input
+          id="name"
+          formControlName="name"
+          type="text"
+          class="input-field"
+          placeholder="Ada Lovelace"
+        />
+        <small class="error-text" *ngIf="getFieldError(nameControl, 'Name') as error">{{ error }}</small>
+      </div>
+
+      <div>
+        <label for="register-email" class="mb-2 block text-sm font-medium text-slate-700">Email address</label>
+        <input
+          id="register-email"
+          formControlName="email"
+          type="email"
+          class="input-field"
+          placeholder="you@example.com"
+        />
+        <small class="error-text" *ngIf="getFieldError(emailControl, 'Email') as error">{{ error }}</small>
+      </div>
+
+      <div>
+        <label for="register-password" class="mb-2 block text-sm font-medium text-slate-700">Password</label>
+        <input
+          id="register-password"
+          formControlName="password"
+          type="password"
+          class="input-field"
+          placeholder="Create a password"
+        />
+        <small class="error-text" *ngIf="getFieldError(passwordControl, 'Password') as error">{{ error }}</small>
+      </div>
+
+      <div>
+        <label for="confirmPassword" class="mb-2 block text-sm font-medium text-slate-700">Confirm password</label>
+        <input
+          id="confirmPassword"
+          formControlName="confirmPassword"
+          type="password"
+          class="input-field"
+          placeholder="Re-enter your password"
+        />
+        <small class="error-text" *ngIf="getConfirmPasswordError() as error">{{ error }}</small>
+      </div>
+
+      <button
+        type="submit"
+        class="submit-btn"
+        [disabled]="registerForm.invalid || isLoading"
+      >
+        <span *ngIf="!isLoading">Create account</span>
+        <span *ngIf="isLoading">Creating account...</span>
+      </button>
+    </form>
+
+    <p class="mt-6 text-center text-sm text-slate-600">
+      Already have an account?
+      <a routerLink="/auth/login" class="font-semibold text-blue-600 transition hover:text-blue-700">Sign in</a>
+    </p>
+  </div>
+</section>
