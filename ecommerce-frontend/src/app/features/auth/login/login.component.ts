@@ -16,6 +16,7 @@ export class LoginComponent {
   submitted = false;
   isLoading = false;
   errorMessage: string | null = null;
+  showPassword = false;
 
   constructor(
     private fb: FormBuilder,
@@ -24,8 +25,13 @@ export class LoginComponent {
   ) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(6)]]
+      password: ['', [Validators.required, Validators.minLength(6)]],
+      remember: [false]
     });
+  }
+
+  togglePasswordVisibility(): void {
+    this.showPassword = !this.showPassword;
   }
 
   get emailControl(): AbstractControl | null {
@@ -46,7 +52,8 @@ export class LoginComponent {
     }
 
     this.isLoading = true;
-    this.authService.login(this.loginForm.value).subscribe({
+    const { email, password } = this.loginForm.value;
+    this.authService.login({ email, password }).subscribe({
       next: (response) => {
         this.isLoading = false;
         localStorage.setItem('authToken', response.token ?? '');

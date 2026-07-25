@@ -16,6 +16,8 @@ export class RegisterComponent {
   submitted = false;
   isLoading = false;
   errorMessage: string | null = null;
+  showPassword = false;
+  showConfirmPassword = false;
 
   constructor(
     private fb: FormBuilder,
@@ -30,6 +32,14 @@ export class RegisterComponent {
     }, {
       validators: this.passwordsMatchValidator
     });
+  }
+
+  togglePasswordVisibility(): void {
+    this.showPassword = !this.showPassword;
+  }
+
+  toggleConfirmPasswordVisibility(): void {
+    this.showConfirmPassword = !this.showConfirmPassword;
   }
 
   get nameControl(): AbstractControl | null {
