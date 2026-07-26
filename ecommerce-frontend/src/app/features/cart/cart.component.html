@@ -1,0 +1,158 @@
+<nav class="fixed top-0 w-full z-50 bg-surface-container-lowest border-b border-outline-variant">
+  <div class="flex justify-between items-center px-gutter py-sm max-w-container-max mx-auto">
+    <a routerLink="/products" class="text-display-lg-mobile font-extrabold text-primary">LuxeCart</a>
+
+    <div class="flex items-center gap-md">
+      <div class="hidden md:flex items-center bg-surface-container-low px-sm py-xs rounded-lg border border-outline-variant">
+        <span class="material-symbols-outlined text-on-surface-variant mr-xs">search</span>
+        <input class="bg-transparent border-none focus:ring-0 outline-none text-body-md text-on-surface" placeholder="Search products..." type="text" />
+      </div>
+
+      <div class="flex items-center gap-sm">
+        <div class="hidden md:flex gap-md mr-md">
+          <a routerLink="/products" class="text-on-surface-variant hover:text-primary transition-colors text-body-md">Home</a>
+          <a routerLink="/products" class="text-on-surface-variant hover:text-primary transition-colors text-body-md">Shop</a>
+        </div>
+        <button type="button" class="flex items-center justify-center p-xs relative text-primary font-bold border-b-2 border-primary pb-1">
+          <span class="material-symbols-outlined">shopping_cart</span>
+          <span *ngIf="(totals | async)?.itemCount as count" class="absolute -top-1 -right-1 bg-primary-container text-on-primary-container text-[10px] w-4 h-4 flex items-center justify-center rounded-full">{{ count }}</span>
+        </button>
+        <button type="button" class="flex items-center justify-center p-xs text-on-surface-variant hover:text-primary transition-colors">
+          <span class="material-symbols-outlined">account_circle</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<main class="pt-xl pb-xl px-gutter max-w-container-max mx-auto mt-lg">
+  <div class="mb-lg" *ngIf="totals | async as totals">
+    <h1 class="text-display-lg text-on-surface">Your Cart</h1>
+    <p class="text-body-lg text-on-surface-variant">You have {{ totals.itemCount }} {{ totals.itemCount === 1 ? 'item' : 'items' }} in your shopping bag.</p>
+  </div>
+
+  <ng-container *ngIf="items | async as items">
+    <div *ngIf="items.length > 0; else emptyCart" class="grid grid-cols-1 lg:grid-cols-12 gap-lg items-start">
+      <div class="lg:col-span-8 flex flex-col gap-sm">
+        <div *ngFor="let item of items" class="item-card bg-surface-container-lowest border border-outline-variant rounded-xl p-md flex flex-col sm:flex-row items-center gap-md">
+          <div class="w-32 h-32 flex-shrink-0 bg-surface-variant rounded-lg overflow-hidden flex items-center justify-center">
+            <img *ngIf="item.image; else noImage" [src]="item.image" [alt]="item.name" class="w-full h-full object-cover" />
+            <ng-template #noImage>
+              <span class="material-symbols-outlined text-on-surface-variant text-[48px]">inventory_2</span>
+            </ng-template>
+          </div>
+          <div class="flex-grow">
+            <h3 class="text-headline-md text-on-surface mb-xs">{{ item.name }}</h3>
+            <div class="flex items-center justify-between">
+              <span class="text-headline-md text-primary">{{ item.price | currency }}</span>
+            </div>
+          </div>
+          <div class="flex flex-col items-end gap-md">
+            <button type="button" (click)="remove(item.productId)" class="text-error hover:opacity-80 transition-opacity p-xs flex items-center gap-xs">
+              <span class="material-symbols-outlined">delete</span>
+              <span class="text-label-sm">Remove</span>
+            </button>
+            <div class="flex items-center bg-surface-container-low border border-outline-variant rounded-full p-1">
+              <button type="button" (click)="decrement(item.productId, item.quantity)" [disabled]="item.quantity <= 1" class="w-8 h-8 flex items-center justify-center hover:bg-surface-variant rounded-full transition-colors disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent">
+                <span class="material-symbols-outlined text-[18px]">remove</span>
+              </button>
+              <span class="w-10 text-center text-body-md font-bold">{{ item.quantity }}</span>
+              <button type="button" (click)="increment(item.productId, item.quantity)" class="w-8 h-8 flex items-center justify-center hover:bg-surface-variant rounded-full transition-colors">
+                <span class="material-symbols-outlined text-[18px]">add</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="lg:col-span-4 flex flex-col gap-md sticky top-24" *ngIf="totals | async as totals">
+        <div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-md">
+          <h2 class="text-headline-md text-on-surface mb-md">Order Summary</h2>
+          <div class="space-y-sm mb-lg">
+            <div class="flex justify-between items-center">
+              <span class="text-body-md text-on-surface-variant">Subtotal</span>
+              <span class="text-body-md text-on-surface font-semibold">{{ totals.subtotal | currency }}</span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="text-body-md text-on-surface-variant">Shipping</span>
+              <span class="text-body-md text-primary-container font-semibold">FREE</span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="text-body-md text-on-surface-variant">Tax (Est.)</span>
+              <span class="text-body-md text-on-surface font-semibold">{{ totals.tax | currency }}</span>
+            </div>
+            <div class="border-t border-outline-variant pt-sm mt-sm flex justify-between items-center">
+              <span class="text-headline-md text-on-surface">Total</span>
+              <span class="text-headline-md text-on-surface">{{ totals.total | currency }}</span>
+            </div>
+          </div>
+          <button type="button" routerLink="/checkout" class="w-full bg-primary-container text-on-primary-container py-md px-lg rounded-xl font-bold text-body-lg hover:opacity-90 active:scale-[0.98] transition-all flex items-center justify-center gap-sm">
+            <span>Proceed to Checkout</span>
+            <span class="material-symbols-outlined">arrow_forward</span>
+          </button>
+          <div class="mt-md pt-md border-t border-outline-variant flex flex-col gap-sm">
+            <div class="flex items-center gap-sm text-on-surface-variant">
+              <span class="material-symbols-outlined text-[20px]">verified</span>
+              <span class="text-label-sm">Secure Payment Guaranteed</span>
+            </div>
+            <div class="flex items-center gap-sm text-on-surface-variant">
+              <span class="material-symbols-outlined text-[20px]">local_shipping</span>
+              <span class="text-label-sm">Free Express Shipping on this order</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-primary/5 rounded-xl p-md border border-primary/20">
+          <p class="text-body-md text-on-primary-fixed-variant leading-relaxed">
+            <strong>Member Benefit:</strong> You're earning <span class="text-primary font-bold">{{ rewardPoints(totals.subtotal) | number }} points</span> with this purchase!
+          </p>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+
+  <ng-template #emptyCart>
+    <div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-xl flex flex-col items-center text-center gap-md">
+      <span class="material-symbols-outlined text-on-surface-variant text-[64px]">shopping_cart</span>
+      <h2 class="text-headline-md text-on-surface">Your cart is empty</h2>
+      <p class="text-body-md text-on-surface-variant">Browse our catalog and add products to your bag.</p>
+      <a routerLink="/products" class="bg-primary text-on-primary py-sm px-lg rounded-xl font-bold text-body-md hover:bg-on-primary-fixed-variant transition-colors">Continue Shopping</a>
+    </div>
+  </ng-template>
+</main>
+
+<footer class="w-full py-xl bg-surface-container-high border-t border-outline-variant mt-xl">
+  <div class="flex flex-col md:flex-row justify-between items-start px-gutter max-w-container-max mx-auto gap-lg">
+    <div class="flex flex-col gap-sm shrink-0 max-w-xs">
+      <div class="text-headline-md font-bold text-primary">LuxeCart</div>
+      <p class="text-label-sm text-on-surface-variant">Elevating your shopping experience with curated tech and lifestyle essentials. Quality guaranteed.</p>
+    </div>
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-xl">
+      <div class="flex flex-col gap-sm">
+        <h4 class="text-label-sm text-on-surface font-bold uppercase tracking-widest">Shop</h4>
+        <a class="text-label-sm text-on-surface-variant hover:text-primary transition-colors" href="#">New Arrivals</a>
+        <a class="text-label-sm text-on-surface-variant hover:text-primary transition-colors" href="#">Best Sellers</a>
+      </div>
+      <div class="flex flex-col gap-sm">
+        <h4 class="text-label-sm text-on-surface font-bold uppercase tracking-widest">Support</h4>
+        <a class="text-label-sm text-on-surface-variant hover:text-primary transition-colors" href="#">Contact</a>
+        <a class="text-label-sm text-on-surface-variant hover:text-primary transition-colors" href="#">Shipping Info</a>
+      </div>
+      <div class="flex flex-col gap-sm">
+        <h4 class="text-label-sm text-on-surface font-bold uppercase tracking-widest">Legal</h4>
+        <a class="text-label-sm text-on-surface-variant hover:text-primary transition-colors" href="#">Privacy Policy</a>
+        <a class="text-label-sm text-on-surface-variant hover:text-primary transition-colors" href="#">Terms</a>
+      </div>
+      <div class="flex flex-col gap-sm">
+        <h4 class="text-label-sm text-on-surface font-bold uppercase tracking-widest">Social</h4>
+        <div class="flex gap-sm">
+          <span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-primary">public</span>
+          <span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-primary">share</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="max-w-container-max mx-auto px-gutter mt-xl pt-lg border-t border-outline-variant flex justify-center">
+    <p class="text-label-sm text-on-surface-variant">© 2024 LuxeCart Inc. All rights reserved.</p>
+  </div>
+</footer>
