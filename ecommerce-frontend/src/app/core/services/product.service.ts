@@ -28,14 +28,14 @@ export class ProductService {
     if (query.limit) params = params.set('limit', query.limit);
 
     return this.http
-      .get<ProductApiModel[]>(this.baseUrl, { params })
-      .pipe(map(products => products.map(product => this.toProduct(product))));
+      .get<{status: string, data: {data: ProductApiModel[]}}>(`${this.baseUrl}/getAllProducts`, { params })
+      .pipe(map(res => res.data.data.map(product => this.toProduct(product))));
   }
 
   getById(id: string): Observable<Product> {
     return this.http
-      .get<ProductApiModel>(`${this.baseUrl}/${id}`)
-      .pipe(map(product => this.toProduct(product)));
+      .get<{status: string, data: {data: ProductApiModel}}>(`${this.baseUrl}/${id}`)
+      .pipe(map(res => this.toProduct(res.data.data)));
   }
 
   getByCategory(category: string): Observable<Product[]> {
@@ -61,15 +61,21 @@ export class ProductService {
   }
 
   private toProduct(raw: ProductApiModel): Product {
+    const productId = raw._id || (raw as any).id;
     return {
-      id: raw._id,
+      id: productId ? productId.toString() : '',
       name: raw.title,
       price: raw.price,
       description: raw.description,
       category: raw.category,
       image: raw.image,
+      images: raw.images || [],
+      features: raw.features || [],
       rating: raw.rating ?? { rate: 0, count: 0 },
-      quantity: raw.qunt
+      quantity: raw.qunt,
+      originalPrice: raw.originalPrice,
+      badge: raw.badge,
+      featured: raw.featured
     };
   }
 

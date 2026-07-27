@@ -1,0 +1,196 @@
+
+<div class="min-h-screen bg-[#F7F5F2] py-8 px-4 sm:px-6 lg:px-8 font-['Inter',sans-serif]">
+  
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="flex justify-center items-center py-32">
+    <div class="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-[#1A9C6D]"></div>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="errorMessage" class="max-w-7xl mx-auto py-32 text-center">
+    <div class="inline-flex items-center justify-center w-24 h-24 rounded-full bg-red-100 text-red-500 mb-6">
+      <span class="material-symbols-outlined text-5xl">error_outline</span>
+    </div>
+    <h2 class="text-3xl font-bold text-gray-900 mb-4">Product Not Found</h2>
+    <p class="text-lg text-gray-500 mb-8">{{ errorMessage }}</p>
+    <a routerLink="/products" class="inline-flex items-center px-8 py-3 bg-[#1A9C6D] text-white rounded-full font-bold hover:bg-[#158059] transition-colors">
+      Back to Products
+    </a>
+  </div>
+
+  <div *ngIf="!isLoading && !errorMessage && product" class="max-w-7xl mx-auto">
+    
+    <!-- Breadcrumb -->
+    <nav class="flex text-sm text-[#6B7280] mb-8 font-medium">
+      <a routerLink="/" class="hover:text-[#1A9C6D] transition-colors">Home</a>
+      <span class="mx-2">/</span>
+      <a [routerLink]="['/products']" [queryParams]="{ category: product.category }" class="hover:text-[#1A9C6D] transition-colors">{{ product.category }}</a>
+      <span class="mx-2">/</span>
+      <span class="text-[#1A1A1A]">{{ product.name }}</span>
+    </nav>
+
+    <!-- Main Content Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
+      
+      <!-- LEFT: Image Gallery -->
+      <div class="flex flex-col gap-4">
+        <!-- Main Image -->
+        <div class="relative w-full aspect-square bg-white rounded-2xl p-8 border border-[#E5E7EB] shadow-sm flex items-center justify-center overflow-hidden group">
+          <img [src]="selectedImage" [alt]="product.name" class="w-full h-full object-contain transition-transform duration-500 group-hover:scale-105">
+          
+          <!-- Wishlist Button -->
+          <button (click)="toggleWishlist()" class="absolute top-6 right-6 w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-md border border-[#E5E7EB] text-[#1A9C6D] hover:scale-110 transition-transform z-10">
+            <span class="material-symbols-outlined text-2xl" [style.font-variation-settings]="isWishlisted ? '&quot;FILL&quot; 1' : '&quot;FILL&quot; 0'">favorite</span>
+          </button>
+        </div>
+
+        <!-- Thumbnails -->
+        <div *ngIf="product.images && product.images.length > 1" class="grid grid-cols-4 gap-4">
+          <div *ngFor="let img of product.images" 
+               (click)="selectImage(img)"
+               class="aspect-square bg-white rounded-xl p-2 border-2 cursor-pointer transition-all"
+               [ngClass]="selectedImage === img ? 'border-[#1A9C6D] shadow-md' : 'border-[#E5E7EB] hover:border-gray-300'">
+            <img [src]="img" alt="Thumbnail" class="w-full h-full object-contain">
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: Product Info -->
+      <div class="flex flex-col">
+        <!-- Badges -->
+        <div class="flex flex-wrap gap-2 mb-4">
+          <span *ngIf="product.badge === 'new'" class="bg-[#1A9C6D] text-white text-xs font-bold px-3 py-1 rounded-full shadow-sm">NEW COLLECTION</span>
+          <span *ngIf="product.badge === 'sale' || (product.originalPrice && product.originalPrice > product.price)" class="bg-[#DC2626] text-white text-xs font-bold px-3 py-1 rounded-full shadow-sm">SALE</span>
+          <span *ngIf="product.featured" class="bg-[#1A9C6D] text-white text-xs font-bold px-3 py-1 rounded-full shadow-sm">BESTSELLER</span>
+        </div>
+
+        <h1 class="text-4xl sm:text-5xl font-extrabold text-[#1A1A1A] mb-4 tracking-tight leading-tight">{{ product.name }}</h1>
+
+        <!-- Ratings -->
+        <div class="flex items-center gap-2 mb-6" *ngIf="product.rating">
+          <div class="flex items-center text-[#1A9C6D] text-xl font-bold mr-2">
+            <span class="material-symbols-outlined text-[24px] mr-1" style="font-variation-settings: 'FILL' 1">star</span>
+            {{ product.rating.rate | number:'1.1-1' }}
+          </div>
+          <a href="javascript:void(0)" class="text-sm font-medium text-[#6B7280] hover:text-[#1A9C6D] transition-colors underline decoration-dashed underline-offset-4">
+            ({{ product.rating.count }} reviews)
+          </a>
+        </div>
+
+        <!-- Price -->
+        <div class="flex items-end gap-3 mb-8">
+          <span class="text-4xl font-black text-[#1A1A1A]">${{ product.price | number:'1.2-2' }}</span>
+          <span *ngIf="product.originalPrice" class="text-xl text-[#6B7280] line-through mb-1">${{ product.originalPrice | number:'1.2-2' }}</span>
+        </div>
+
+        <hr class="border-[#E5E7EB] mb-8">
+
+        <!-- Description -->
+        <h3 class="text-sm font-bold text-[#6B7280] uppercase tracking-widest mb-3">Description</h3>
+        <p class="text-lg text-[#6B7280] leading-relaxed mb-8">
+          {{ product.description }}
+        </p>
+
+        <!-- Features List -->
+        <h3 class="text-sm font-bold text-[#6B7280] uppercase tracking-widest mb-4">Highlights</h3>
+        <ul class="space-y-3 mb-10">
+          <li *ngFor="let feature of product.features" class="flex items-start gap-3">
+            <span class="material-symbols-outlined text-[#1A9C6D] mt-0.5">check_circle</span>
+            <span class="text-[#1A1A1A]">{{ feature }}</span>
+          </li>
+        </ul>
+
+        <!-- Cart Actions -->
+        <div class="bg-white p-6 rounded-2xl border border-[#E5E7EB] shadow-sm mb-8">
+          <div class="flex items-center justify-between mb-4">
+            <span class="font-bold text-[#1A1A1A]">Quantity</span>
+            <span class="text-sm font-medium" [ngClass]="product.quantity > 0 ? 'text-[#1A9C6D]' : 'text-[#DC2626]'">
+              <span class="material-symbols-outlined inline-block align-text-bottom text-[18px] mr-1">
+                {{ product.quantity > 0 ? 'inventory_2' : 'warning' }}
+              </span>
+              {{ product.quantity > 0 ? 'In stock & ready to ship' : 'Out of stock' }}
+            </span>
+          </div>
+          
+          <div class="flex flex-col sm:flex-row gap-4">
+            <!-- Quantity Selector -->
+            <div class="flex items-center border-2 border-[#E5E7EB] rounded-xl overflow-hidden h-14 w-full sm:w-32 bg-[#F7F5F2]">
+              <button (click)="decrementQuantity()" [disabled]="quantity <= 1 || product.quantity === 0" class="flex-1 flex justify-center items-center h-full hover:bg-gray-200 transition-colors disabled:opacity-50 text-[#1A1A1A]">
+                <span class="material-symbols-outlined">remove</span>
+              </button>
+              <span class="w-12 text-center font-bold text-[#1A1A1A]">{{ quantity }}</span>
+              <button (click)="incrementQuantity()" [disabled]="quantity >= product.quantity" class="flex-1 flex justify-center items-center h-full hover:bg-gray-200 transition-colors disabled:opacity-50 text-[#1A1A1A]">
+                <span class="material-symbols-outlined">add</span>
+              </button>
+            </div>
+
+            <!-- Add to Cart -->
+            <button (click)="addToCart()" [disabled]="product.quantity === 0" class="flex-1 bg-[#1A9C6D] text-white h-14 rounded-xl font-bold text-lg flex justify-center items-center gap-2 hover:bg-[#158059] transition-colors shadow-md disabled:opacity-50 disabled:cursor-not-allowed">
+              <span class="material-symbols-outlined">shopping_cart</span>
+              Add to Cart
+            </button>
+          </div>
+          
+          <!-- Shop Pay -->
+          <button (click)="buyNow()" [disabled]="product.quantity === 0" class="w-full mt-3 bg-white text-[#1A1A1A] border-2 border-[#1A1A1A] h-14 rounded-xl font-bold text-lg flex justify-center items-center hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+            Buy with Shop Pay
+          </button>
+        </div>
+
+        <!-- Info Cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div class="bg-[#EAF2FE] p-4 rounded-xl flex items-start gap-4">
+            <div class="bg-white p-2 rounded-lg text-blue-600 shadow-sm">
+              <span class="material-symbols-outlined">local_shipping</span>
+            </div>
+            <div>
+              <h4 class="font-bold text-[#1A1A1A] text-sm">Free Shipping</h4>
+              <p class="text-xs text-[#6B7280] mt-1">On all orders over $50.00</p>
+            </div>
+          </div>
+          <div class="bg-[#EAF2FE] p-4 rounded-xl flex items-start gap-4">
+            <div class="bg-white p-2 rounded-lg text-blue-600 shadow-sm">
+              <span class="material-symbols-outlined">assignment_return</span>
+            </div>
+            <div>
+              <h4 class="font-bold text-[#1A1A1A] text-sm">Easy Returns</h4>
+              <p class="text-xs text-[#6B7280] mt-1">30-day money-back guarantee</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Related Products -->
+    <div class="mt-24 mb-12">
+      <div class="flex justify-between items-end mb-8">
+        <div>
+          <h2 class="text-3xl font-extrabold text-[#1A1A1A] tracking-tight">You might also like</h2>
+          <p class="text-[#6B7280] mt-2">Discover more from the {{ product.category }} collection</p>
+        </div>
+        <a [routerLink]="['/products']" [queryParams]="{ category: product.category }" class="hidden sm:flex items-center text-[#1A9C6D] font-bold hover:text-[#158059] transition-colors">
+          View all collection <span class="material-symbols-outlined ml-1">arrow_forward</span>
+        </a>
+      </div>
+
+      <div *ngIf="isLoadingRelated" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <!-- Skeleton loaders -->
+        <div *ngFor="let i of [1,2,3,4]" class="h-[400px] bg-white rounded-2xl animate-pulse"></div>
+      </div>
+
+      <div *ngIf="!isLoadingRelated && relatedProducts.length > 0" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <app-product-card *ngFor="let rp of relatedProducts" [product]="rp" variant="product-page"></app-product-card>
+      </div>
+
+      <div *ngIf="!isLoadingRelated && relatedProducts.length === 0" class="text-center py-12 text-[#6B7280]">
+        No related products found.
+      </div>
+      
+      <a [routerLink]="['/products']" [queryParams]="{ category: product.category }" class="sm:hidden flex justify-center items-center w-full mt-8 py-4 border-2 border-[#E5E7EB] rounded-xl text-[#1A1A1A] font-bold hover:bg-gray-50">
+        View all collection
+      </a>
+    </div>
+
+  </div>
+</div>

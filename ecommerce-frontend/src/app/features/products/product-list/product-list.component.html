@@ -1,0 +1,143 @@
+<div class="min-h-screen bg-[var(--color-surface)] py-12 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-7xl mx-auto">
+    <!-- Premium Header -->
+    <div class="text-center mb-16 pt-8 animate-fade-in-up relative">
+      <!-- Decorative background glow -->
+      <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3/4 h-32 bg-[var(--color-primary)]/10 blur-[100px] rounded-full -z-10"></div>
+      
+      <span class="inline-block px-4 py-1.5 rounded-full bg-green-50 text-[var(--color-primary)] text-sm font-bold tracking-wider uppercase mb-6 shadow-sm border border-green-100">
+        <span class="flex items-center gap-2">
+          <span class="material-symbols-outlined text-[18px]">verified</span>
+          Our Collection
+        </span>
+      </span>
+      
+      <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold text-[#1E2A3A] tracking-tight mb-6">
+        Discover <span class="bg-gradient-to-r from-[var(--color-primary)] to-emerald-400 bg-clip-text text-transparent">Amazing</span> Products
+      </h1>
+      
+      <p class="text-lg md:text-xl text-[#6B7280] max-w-3xl mx-auto leading-relaxed">
+        Explore our meticulously curated collection of the finest electronics, gadgets, and accessories—handpicked exclusively to elevate your lifestyle.
+      </p>
+    </div>
+
+    <!-- Categories Filter -->
+    <div class="flex flex-wrap justify-center gap-3 mb-12">
+      <a routerLink="/products" [queryParams]="{ search: searchQuery }" 
+         class="px-6 py-2.5 rounded-full font-bold text-sm transition-all duration-300 shadow-sm border"
+         [ngClass]="!activeCategory ? 'bg-[var(--color-primary)] text-white border-transparent' : 'bg-white text-[var(--color-on-surface-variant)] border-[var(--color-outline)] hover:border-[var(--color-primary)] hover:text-[var(--color-primary)]'">
+        All
+      </a>
+      <a *ngFor="let cat of categories" 
+         routerLink="/products" [queryParams]="{ category: cat.name, search: searchQuery }" 
+         class="px-6 py-2.5 rounded-full font-bold text-sm transition-all duration-300 shadow-sm border capitalize"
+         [ngClass]="activeCategory === cat.name ? 'bg-[var(--color-primary)] text-white border-transparent' : 'bg-white text-[var(--color-on-surface-variant)] border-[var(--color-outline)] hover:border-[var(--color-primary)] hover:text-[var(--color-primary)]'">
+        {{ cat.name }}
+      </a>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="flex justify-center items-center py-20">
+      <div class="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-[var(--color-primary)]"></div>
+    </div>
+
+    <!-- Error State -->
+    <div *ngIf="errorMessage" class="bg-[var(--color-error-container)] text-[var(--color-on-error-container)] p-6 rounded-2xl text-center shadow-sm">
+      <span class="material-symbols-outlined text-4xl mb-2">error</span>
+      <p class="text-[var(--text-body-lg)] font-medium">{{ errorMessage }}</p>
+    </div>
+
+    <!-- Product Grid -->
+    <div *ngIf="!isLoading && !errorMessage" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+      
+      <!-- Empty State -->
+      <div *ngIf="products.length === 0" class="col-span-full py-20 px-4 text-center bg-white rounded-3xl border border-gray-100 shadow-sm mt-8">
+        
+        <!-- Animated Icon Container -->
+        <div class="relative inline-block mb-6 group">
+          <div class="absolute inset-0 bg-red-100 rounded-full blur-xl opacity-50 group-hover:opacity-70 transition-opacity duration-500"></div>
+          <div class="relative w-24 h-24 flex items-center justify-center bg-gradient-to-br from-red-50 to-orange-50 rounded-full border border-red-100 shadow-sm mx-auto">
+            <span class="material-symbols-outlined text-5xl text-red-400">search_off</span>
+          </div>
+        </div>
+
+        <!-- Text Content -->
+        <h3 class="text-3xl font-bold text-gray-900 mb-4 tracking-tight">No products found</h3>
+        
+        <div *ngIf="searchQuery" class="max-w-2xl mx-auto">
+          <p class="text-lg text-gray-500 mb-8 leading-relaxed inline-block">
+            We couldn't find any matches for <span class="px-3 py-1 bg-gray-100 text-gray-800 rounded-md font-semibold mx-1 shadow-inner">"{{ searchQuery }}"</span>. Try checking for typos or using broader terms.
+          </p>
+          <div>
+            <a routerLink="/products" class="inline-flex items-center justify-center px-8 py-3 text-sm font-bold text-white bg-[var(--color-primary)] rounded-full hover:bg-[var(--color-success)] transition-all duration-300 shadow-md hover:shadow-lg">
+              <span class="material-symbols-outlined mr-2 text-[20px]">refresh</span>
+              Clear Search
+            </a>
+          </div>
+        </div>
+
+        <div *ngIf="!searchQuery" class="max-w-xl mx-auto">
+          <p class="text-lg text-gray-500 leading-relaxed">
+            Looks like this category is currently empty. Check back later for exciting new arrivals!
+          </p>
+        </div>
+      </div>
+
+      <!-- Product Card -->
+      <div *ngFor="let product of products" 
+           [routerLink]="['/products', product.id]"
+           class="group bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 border border-[var(--color-surface-container-high)] flex flex-col h-full cursor-pointer">
+        
+        <!-- Image Container -->
+        <div class="relative w-full pt-[100%] overflow-hidden bg-gray-50 p-4">
+          <img [src]="product.image || 'https://via.placeholder.com/400?text=No+Image'" 
+               [alt]="product.name"
+               class="absolute inset-0 w-full h-full object-contain p-6 transition-transform duration-500 group-hover:scale-110">
+          
+          <div *ngIf="!product.quantity || product.quantity <= 0" class="absolute top-4 right-4 bg-[var(--color-error)] text-white text-xs font-bold px-3 py-1 rounded-full shadow-md z-10">
+            Out of Stock
+          </div>
+          
+          <!-- Category Badge -->
+          <div class="absolute top-4 left-4 bg-white/80 backdrop-blur-md text-[var(--color-primary)] text-xs font-bold px-3 py-1 rounded-full shadow-sm z-10 border border-white">
+            {{ product.category }}
+          </div>
+        </div>
+
+        <!-- Content -->
+        <div class="p-6 flex flex-col flex-grow">
+          <div class="flex justify-between items-start mb-2 gap-2">
+            <h3 class="text-lg font-bold text-[var(--color-on-surface)] leading-tight line-clamp-2">
+              {{ product.name }}
+            </h3>
+          </div>
+          
+          <!-- Rating -->
+          <div class="flex items-center gap-1 mb-4" *ngIf="product.rating">
+            <div class="flex items-center text-[#1A9C6D] text-sm font-bold">
+              <span class="material-symbols-outlined text-[16px] mr-1" style="font-variation-settings: 'FILL' 1">star</span>
+              {{ product.rating.rate | number:'1.1-1' }}
+            </div>
+            <span class="text-xs text-[var(--color-outline)] font-medium">({{ product.rating.count }})</span>
+          </div>
+          
+          <p class="text-sm text-[var(--color-on-surface-variant)] line-clamp-2 mb-6 flex-grow">
+            {{ product.description }}
+          </p>
+
+          <!-- Price & Action -->
+          <div class="flex items-center justify-between mt-auto pt-4 border-t border-[var(--color-surface-container)]">
+            <span class="text-2xl font-black text-[var(--color-on-surface)]">
+              ${{ product.price | number:'1.2-2' }}
+            </span>
+            <button (click)="$event.stopPropagation(); addToCart(product)" class="bg-[var(--color-primary)] hover:bg-[var(--color-primary-container)] text-white hover:text-[var(--color-on-primary-container)] h-12 w-12 rounded-full flex items-center justify-center transition-colors duration-200 shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                    [disabled]="!product.quantity || product.quantity <= 0"
+                    title="Add to Cart">
+              <span class="material-symbols-outlined">shopping_cart</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

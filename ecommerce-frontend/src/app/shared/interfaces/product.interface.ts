@@ -10,8 +10,13 @@ export interface Product {
   description: string;
   category: string;
   image: string;
+  images?: string[];
+  features?: string[];
   rating: ProductRating;
   quantity: number;
+  originalPrice?: number;
+  badge?: string;
+  featured?: boolean;
 }
 
 export interface ProductApiModel {
@@ -21,8 +26,13 @@ export interface ProductApiModel {
   description: string;
   category: string;
   image: string;
+  images?: string[];
+  features?: string[];
   rating?: ProductRating;
   qunt: number;
+  originalPrice?: number;
+  badge?: string;
+  featured?: boolean;
   createdAt?: string;
   updatedAt?: string;
 }
