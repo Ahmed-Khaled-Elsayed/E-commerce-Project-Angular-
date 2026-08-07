@@ -1,0 +1,129 @@
+/* Admin shared styles */
+
+/* Navigation pills */
+.nav-pill {
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-full);
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  color: rgba(255, 255, 255, 0.65);
+}
+.nav-pill:hover {
+  color: white;
+  background-color: rgba(255, 255, 255, 0.08);
+}
+.nav-pill-active {
+  color: white;
+  background-color: rgba(255, 255, 255, 0.12);
+}
+.nav-pill-exit {
+  color: rgba(255, 255, 255, 0.5);
+}
+.nav-pill-exit:hover {
+  color: white;
+}
+
+/* Stat cards */
+.stat-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: white;
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+.stat-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transform: translateY(-2px);
+}
+.stat-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 3rem;
+  height: 3rem;
+  border-radius: var(--radius-md);
+  flex-shrink: 0;
+}
+.stat-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-on-surface-variant);
+}
+.stat-value {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--color-on-surface);
+  line-height: 1.2;
+  margin-top: 0.125rem;
+}
+
+/* Cards */
+.card {
+  background: white;
+  border-radius: var(--radius-lg);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+  overflow: hidden;
+}
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+.card-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-on-surface);
+}
+
+/* Status badges */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.625rem;
+  border-radius: var(--radius-full);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: capitalize;
+}
+.badge-pending {
+  background-color: #fef3c7;
+  color: #92400e;
+}
+.badge-processing {
+  background-color: #dbeafe;
+  color: #1e40af;
+}
+.badge-shipped {
+  background-color: #e0e7ff;
+  color: #3730a3;
+}
+.badge-delivered {
+  background-color: #d1fae5;
+  color: #065f46;
+}
+.badge-cancelled {
+  background-color: #fde2e2;
+  color: #991b1b;
+}
+
+/* Loading spinner */
+.loading-spinner {
+  width: 2rem;
+  height: 2rem;
+  border: 3px solid var(--color-surface-container);
+  border-top-color: var(--color-primary);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}

@@ -84,7 +84,7 @@ export class RegisterComponent {
     this.authService.register(payload).subscribe({
       next: (response) => {
         this.isLoading = false;
-        localStorage.setItem('authToken', response.token ?? '');
+        localStorage.setItem('token', response.token ?? '');
         localStorage.setItem('user', JSON.stringify(response.user ?? {}));
         this.router.navigate(['/products']);
       },

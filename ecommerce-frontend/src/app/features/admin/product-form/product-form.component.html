@@ -1,0 +1,151 @@
+<!-- Product Form (Add / Edit) -->
+<div class="min-h-screen bg-surface">
+  <!-- Header -->
+  <header class="bg-inverse-surface text-inverse-on-surface">
+    <div class="max-w-[var(--spacing-container-max)] mx-auto px-[var(--spacing-gutter)] py-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <h1 class="text-2xl font-bold tracking-tight">{{ isEditMode ? 'Edit Product' : 'Add New Product' }}</h1>
+          <p class="text-sm opacity-70 mt-1">{{ isEditMode ? 'Update product information' : 'Fill in the details to add a new product' }}</p>
+        </div>
+        <nav class="flex gap-2">
+          <a routerLink="/admin" class="nav-pill">Dashboard</a>
+          <a routerLink="/admin/products" class="nav-pill nav-pill-active">Products</a>
+          <a routerLink="/admin/orders" class="nav-pill">Orders</a>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-3xl mx-auto px-[var(--spacing-gutter)] py-8">
+    <!-- Loading -->
+    <div *ngIf="isLoading" class="flex items-center justify-center py-20">
+      <div class="loading-spinner"></div>
+      <span class="ml-3 text-on-surface-variant">Loading product...</span>
+    </div>
+
+    <!-- Messages -->
+    <div *ngIf="successMessage" class="mb-6 px-4 py-3 rounded-lg bg-[#d1fae5] text-[#065f46] text-sm font-medium flex items-center gap-2 animate-fadeIn">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+      {{ successMessage }}
+    </div>
+    <div *ngIf="errorMessage" class="mb-6 px-4 py-3 rounded-lg bg-error-container text-on-error-container text-sm font-medium flex items-center gap-2 animate-fadeIn">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
+      {{ errorMessage }}
+    </div>
+
+    <!-- Form -->
+    <form *ngIf="!isLoading" [formGroup]="form" (ngSubmit)="onSubmit()" class="card p-8">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Product Name -->
+        <div class="md:col-span-2">
+          <label for="name" class="form-label">Product Name</label>
+          <input
+            id="name"
+            formControlName="name"
+            type="text"
+            placeholder="e.g. Wireless Noise-Cancelling Headphones"
+            class="form-input"
+            [class.form-input-error]="getFieldError('name')"
+          />
+          <p *ngIf="getFieldError('name')" class="form-error">{{ getFieldError('name') }}</p>
+        </div>
+
+        <!-- Price -->
+        <div>
+          <label for="price" class="form-label">Price ($)</label>
+          <input
+            id="price"
+            formControlName="price"
+            type="number"
+            step="0.01"
+            placeholder="0.00"
+            class="form-input"
+            [class.form-input-error]="getFieldError('price')"
+          />
+          <p *ngIf="getFieldError('price')" class="form-error">{{ getFieldError('price') }}</p>
+        </div>
+
+        <!-- Quantity -->
+        <div>
+          <label for="quantity" class="form-label">Quantity in Stock</label>
+          <input
+            id="quantity"
+            formControlName="quantity"
+            type="number"
+            min="0"
+            placeholder="0"
+            class="form-input"
+            [class.form-input-error]="getFieldError('quantity')"
+          />
+          <p *ngIf="getFieldError('quantity')" class="form-error">{{ getFieldError('quantity') }}</p>
+        </div>
+
+        <!-- Category -->
+        <div>
+          <label for="category" class="form-label">Category</label>
+          <select
+            id="category"
+            formControlName="category"
+            class="form-input"
+            [class.form-input-error]="getFieldError('category')"
+          >
+            <option value="" disabled>Select a category</option>
+            <option *ngFor="let cat of categories" [value]="cat">{{ cat }}</option>
+          </select>
+          <p *ngIf="getFieldError('category')" class="form-error">{{ getFieldError('category') }}</p>
+        </div>
+
+        <!-- Image URL -->
+        <div>
+          <label for="image" class="form-label">Image URL</label>
+          <input
+            id="image"
+            formControlName="image"
+            type="text"
+            placeholder="https://..."
+            class="form-input"
+            [class.form-input-error]="getFieldError('image')"
+          />
+          <p *ngIf="getFieldError('image')" class="form-error">{{ getFieldError('image') }}</p>
+        </div>
+
+        <!-- Image Preview -->
+        <div *ngIf="form.get('image')?.value" class="md:col-span-2">
+          <label class="form-label">Image Preview</label>
+          <div class="w-40 h-40 rounded-xl border-2 border-dashed border-outline-variant/40 overflow-hidden bg-surface-container">
+            <img [src]="form.get('image')?.value" alt="Preview" class="w-full h-full object-cover" />
+          </div>
+        </div>
+
+        <!-- Description -->
+        <div class="md:col-span-2">
+          <label for="description" class="form-label">Description</label>
+          <textarea
+            id="description"
+            formControlName="description"
+            rows="4"
+            placeholder="Describe the product in detail..."
+            class="form-input resize-none"
+            [class.form-input-error]="getFieldError('description')"
+          ></textarea>
+          <p *ngIf="getFieldError('description')" class="form-error">{{ getFieldError('description') }}</p>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="flex items-center justify-end gap-3 mt-8 pt-6 border-t border-outline-variant/20">
+        <a routerLink="/admin/products" class="px-5 py-2.5 text-sm font-medium text-on-surface-variant hover:bg-surface-container rounded-lg transition-colors">Cancel</a>
+        <button
+          type="submit"
+          [disabled]="isSaving"
+          class="btn-primary"
+          [class.opacity-60]="isSaving"
+        >
+          <div *ngIf="isSaving" class="loading-spinner-sm"></div>
+          {{ isSaving ? 'Saving...' : (isEditMode ? 'Update Product' : 'Create Product') }}
+        </button>
+      </div>
+    </form>
+  </main>
+</div>
