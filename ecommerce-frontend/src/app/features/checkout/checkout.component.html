@@ -1,0 +1,160 @@
+<nav class="fixed top-0 w-full z-50 bg-surface-container-lowest border-b border-outline-variant">
+  <div class="flex justify-between items-center px-gutter py-sm max-w-container-max mx-auto">
+    <a routerLink="/products" class="text-display-lg-mobile font-extrabold text-primary">LuxeCart</a>
+    <div class="flex items-center gap-md">
+      <a routerLink="/cart" class="flex items-center justify-center p-xs text-on-surface-variant hover:text-primary transition-colors">
+        <span class="material-symbols-outlined">shopping_cart</span>
+      </a>
+      <a routerLink="/checkout/orders" class="flex items-center justify-center p-xs text-on-surface-variant hover:text-primary transition-colors">
+        <span class="material-symbols-outlined">receipt_long</span>
+      </a>
+    </div>
+  </div>
+</nav>
+
+<main class="pt-xl pb-xl px-gutter max-w-container-max mx-auto mt-lg">
+  <div class="mb-lg">
+    <h1 class="text-display-lg text-on-surface">Checkout</h1>
+    <p class="text-body-lg text-on-surface-variant">Enter your shipping details to complete the order.</p>
+  </div>
+
+  <ng-container *ngIf="items | async as cartItems">
+    <div *ngIf="cartItems.length > 0; else emptyCart" class="grid grid-cols-1 lg:grid-cols-12 gap-lg items-start">
+      <form [formGroup]="shippingForm" (ngSubmit)="placeOrder()" class="lg:col-span-8 bg-surface-container-lowest border border-outline-variant rounded-xl p-md flex flex-col gap-md">
+        <h2 class="text-headline-md text-on-surface">Shipping Details</h2>
+
+        <div *ngIf="errorMessage" class="rounded-lg bg-error-container px-md py-sm text-body-md text-on-error-container">
+          {{ errorMessage }}
+        </div>
+
+        <div>
+          <label for="fullName" class="block text-label-sm text-on-surface-variant mb-xs ml-1">FULL NAME</label>
+          <input
+            id="fullName"
+            formControlName="fullName"
+            type="text"
+            placeholder="Jane Doe"
+            class="auth-input w-full bg-surface-container-low rounded-lg px-md py-sm text-body-md text-on-surface placeholder:text-outline-variant outline-none"
+          />
+          <small class="block text-label-sm text-error mt-xs ml-1" *ngIf="getFieldError(fullNameControl, 'Full name') as error">{{ error }}</small>
+        </div>
+
+        <div>
+          <label for="address" class="block text-label-sm text-on-surface-variant mb-xs ml-1">ADDRESS</label>
+          <input
+            id="address"
+            formControlName="address"
+            type="text"
+            placeholder="123 Market Street"
+            class="auth-input w-full bg-surface-container-low rounded-lg px-md py-sm text-body-md text-on-surface placeholder:text-outline-variant outline-none"
+          />
+          <small class="block text-label-sm text-error mt-xs ml-1" *ngIf="getFieldError(addressControl, 'Address') as error">{{ error }}</small>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-md">
+          <div>
+            <label for="city" class="block text-label-sm text-on-surface-variant mb-xs ml-1">CITY</label>
+            <input
+              id="city"
+              formControlName="city"
+              type="text"
+              placeholder="Cairo"
+              class="auth-input w-full bg-surface-container-low rounded-lg px-md py-sm text-body-md text-on-surface placeholder:text-outline-variant outline-none"
+            />
+            <small class="block text-label-sm text-error mt-xs ml-1" *ngIf="getFieldError(cityControl, 'City') as error">{{ error }}</small>
+          </div>
+
+          <div>
+            <label for="postalCode" class="block text-label-sm text-on-surface-variant mb-xs ml-1">POSTAL CODE</label>
+            <input
+              id="postalCode"
+              formControlName="postalCode"
+              type="text"
+              placeholder="12345"
+              class="auth-input w-full bg-surface-container-low rounded-lg px-md py-sm text-body-md text-on-surface placeholder:text-outline-variant outline-none"
+            />
+            <small class="block text-label-sm text-error mt-xs ml-1" *ngIf="getFieldError(postalCodeControl, 'Postal code') as error">{{ error }}</small>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-md">
+          <div>
+            <label for="country" class="block text-label-sm text-on-surface-variant mb-xs ml-1">COUNTRY</label>
+            <input
+              id="country"
+              formControlName="country"
+              type="text"
+              placeholder="Egypt"
+              class="auth-input w-full bg-surface-container-low rounded-lg px-md py-sm text-body-md text-on-surface placeholder:text-outline-variant outline-none"
+            />
+            <small class="block text-label-sm text-error mt-xs ml-1" *ngIf="getFieldError(countryControl, 'Country') as error">{{ error }}</small>
+          </div>
+
+          <div>
+            <label for="phone" class="block text-label-sm text-on-surface-variant mb-xs ml-1">PHONE (OPTIONAL)</label>
+            <input
+              id="phone"
+              formControlName="phone"
+              type="tel"
+              placeholder="+20 100 000 0000"
+              class="auth-input w-full bg-surface-container-low rounded-lg px-md py-sm text-body-md text-on-surface placeholder:text-outline-variant outline-none"
+            />
+          </div>
+        </div>
+
+        <button
+          type="submit"
+          [disabled]="isPlacingOrder"
+          class="w-full bg-primary text-on-primary py-md px-lg rounded-xl font-bold text-body-lg transition-all duration-200 hover:shadow-lg hover:bg-on-primary-fixed-variant active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:shadow-none disabled:active:scale-100"
+        >
+          {{ isPlacingOrder ? 'Placing order...' : 'Place Order' }}
+        </button>
+      </form>
+
+      <div class="lg:col-span-4 flex flex-col gap-md sticky top-24" *ngIf="totals | async as orderTotals">
+        <div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-md">
+          <h2 class="text-headline-md text-on-surface mb-md">Order Summary</h2>
+          <div class="flex flex-col gap-sm mb-md">
+            <div *ngFor="let item of cartItems" class="flex items-center gap-sm">
+              <div class="w-12 h-12 flex-shrink-0 bg-surface-variant rounded-lg overflow-hidden flex items-center justify-center">
+                <img *ngIf="item.image; else noImage" [src]="item.image" [alt]="item.name" class="w-full h-full object-cover" />
+                <ng-template #noImage>
+                  <span class="material-symbols-outlined text-on-surface-variant text-[24px]">inventory_2</span>
+                </ng-template>
+              </div>
+              <div class="flex-grow">
+                <p class="text-body-md text-on-surface">{{ item.name }}</p>
+                <p class="text-label-sm text-on-surface-variant">Qty {{ item.quantity }}</p>
+              </div>
+              <span class="text-body-md text-on-surface font-semibold">{{ item.price * item.quantity | currency }}</span>
+            </div>
+          </div>
+
+          <div class="space-y-sm border-t border-outline-variant pt-sm">
+            <div class="flex justify-between items-center">
+              <span class="text-body-md text-on-surface-variant">Subtotal</span>
+              <span class="text-body-md text-on-surface font-semibold">{{ orderTotals.subtotal | currency }}</span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="text-body-md text-on-surface-variant">Tax (Est.)</span>
+              <span class="text-body-md text-on-surface font-semibold">{{ orderTotals.tax | currency }}</span>
+            </div>
+            <div class="border-t border-outline-variant pt-sm mt-sm flex justify-between items-center">
+              <span class="text-headline-md text-on-surface">Total</span>
+              <span class="text-headline-md text-on-surface">{{ orderTotals.total | currency }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+
+  <ng-template #emptyCart>
+    <div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-xl flex flex-col items-center text-center gap-md">
+      <span class="material-symbols-outlined text-on-surface-variant text-[64px]">shopping_cart</span>
+      <h2 class="text-headline-md text-on-surface">Your cart is empty</h2>
+      <p class="text-body-md text-on-surface-variant">Add products to your cart before checking out.</p>
+      <a routerLink="/products" class="bg-primary text-on-primary py-sm px-lg rounded-xl font-bold text-body-md hover:bg-on-primary-fixed-variant transition-colors">Continue Shopping</a>
+    </div>
+  </ng-template>
+</main>

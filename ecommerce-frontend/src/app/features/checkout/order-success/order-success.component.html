@@ -1,0 +1,37 @@
+<nav class="fixed top-0 w-full z-50 bg-surface-container-lowest border-b border-outline-variant">
+  <div class="flex justify-between items-center px-gutter py-sm max-w-container-max mx-auto">
+    <a routerLink="/products" class="text-display-lg-mobile font-extrabold text-primary">LuxeCart</a>
+    <a routerLink="/checkout/orders" class="flex items-center justify-center p-xs text-on-surface-variant hover:text-primary transition-colors">
+      <span class="material-symbols-outlined">receipt_long</span>
+    </a>
+  </div>
+</nav>
+
+<main class="pt-xl pb-xl px-gutter max-w-container-max mx-auto mt-lg flex justify-center">
+  <div class="w-full max-w-xl bg-surface-container-lowest border border-outline-variant rounded-xl p-xl flex flex-col items-center text-center gap-md">
+    <span class="material-symbols-outlined text-primary text-[64px]">check_circle</span>
+    <h1 class="text-display-lg-mobile text-on-surface">Order Placed!</h1>
+    <p class="text-body-lg text-on-surface-variant">Thank you for your purchase. We've sent a confirmation to your account.</p>
+
+    <div *ngIf="orderId" class="bg-surface-container-low rounded-lg px-lg py-sm">
+      <span class="text-label-sm text-on-surface-variant uppercase tracking-widest">Order Number</span>
+      <p class="text-headline-md text-on-surface">{{ orderId }}</p>
+    </div>
+
+    <div *ngIf="!isLoading && order" class="w-full text-left border-t border-outline-variant pt-md mt-sm">
+      <div class="flex justify-between items-center mb-xs">
+        <span class="text-body-md text-on-surface-variant">Status</span>
+        <span class="text-body-md text-on-surface font-semibold">{{ order.status }}</span>
+      </div>
+      <div class="flex justify-between items-center">
+        <span class="text-body-md text-on-surface-variant">Total Paid</span>
+        <span class="text-headline-md text-on-surface">{{ order.totalPrice | currency }}</span>
+      </div>
+    </div>
+
+    <div class="flex flex-col sm:flex-row gap-sm w-full mt-md">
+      <a routerLink="/products" class="flex-1 bg-primary text-on-primary py-sm px-lg rounded-xl font-bold text-body-md text-center hover:bg-on-primary-fixed-variant transition-colors">Continue Shopping</a>
+      <a routerLink="/checkout/orders" class="flex-1 bg-surface-container-low text-on-surface py-sm px-lg rounded-xl font-bold text-body-md text-center border border-outline-variant hover:bg-surface-container transition-colors">View My Orders</a>
+    </div>
+  </div>
+</main>

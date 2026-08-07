@@ -1,0 +1,55 @@
+<nav class="fixed top-0 w-full z-50 bg-surface-container-lowest border-b border-outline-variant">
+  <div class="flex justify-between items-center px-gutter py-sm max-w-container-max mx-auto">
+    <a routerLink="/products" class="text-display-lg-mobile font-extrabold text-primary">LuxeCart</a>
+    <a routerLink="/cart" class="flex items-center justify-center p-xs text-on-surface-variant hover:text-primary transition-colors">
+      <span class="material-symbols-outlined">shopping_cart</span>
+    </a>
+  </div>
+</nav>
+
+<main class="pt-xl pb-xl px-gutter max-w-container-max mx-auto mt-lg">
+  <div class="mb-lg">
+    <h1 class="text-display-lg text-on-surface">My Orders</h1>
+    <p class="text-body-lg text-on-surface-variant">Track and review your past purchases.</p>
+  </div>
+
+  <div *ngIf="isLoading" class="flex justify-center py-xl">
+    <div class="loading-spinner"></div>
+  </div>
+
+  <div *ngIf="!isLoading && hasError" class="bg-error-container text-on-error-container rounded-xl p-md text-body-md">
+    We couldn't load your orders. Please try again later.
+  </div>
+
+  <div *ngIf="!isLoading && !hasError">
+    <div *ngIf="orders.length > 0; else noOrders" class="flex flex-col gap-sm">
+      <div *ngFor="let order of orders" class="bg-surface-container-lowest border border-outline-variant rounded-xl p-md flex flex-col sm:flex-row sm:items-center gap-md">
+        <div class="w-16 h-16 flex-shrink-0 bg-surface-variant rounded-lg overflow-hidden flex items-center justify-center">
+          <img *ngIf="order.items[0]?.image; else noImage" [src]="order.items[0].image" [alt]="order.items[0].name" class="w-full h-full object-cover" />
+          <ng-template #noImage>
+            <span class="material-symbols-outlined text-on-surface-variant text-[32px]">inventory_2</span>
+          </ng-template>
+        </div>
+
+        <div class="flex-grow">
+          <p class="text-body-md text-on-surface font-semibold">{{ getOrderItemsSummary(order) }}</p>
+          <p class="text-label-sm text-on-surface-variant">Order #{{ order._id }} · {{ order.createdAt | date:'mediumDate' }}</p>
+        </div>
+
+        <div class="flex items-center gap-md">
+          <span class="badge" [ngClass]="getStatusClass(order.status)">{{ order.status }}</span>
+          <span class="text-headline-md text-on-surface">{{ order.totalPrice | currency }}</span>
+        </div>
+      </div>
+    </div>
+
+    <ng-template #noOrders>
+      <div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-xl flex flex-col items-center text-center gap-md">
+        <span class="material-symbols-outlined text-on-surface-variant text-[64px]">receipt_long</span>
+        <h2 class="text-headline-md text-on-surface">No orders yet</h2>
+        <p class="text-body-md text-on-surface-variant">Your past orders will show up here once you place one.</p>
+        <a routerLink="/products" class="bg-primary text-on-primary py-sm px-lg rounded-xl font-bold text-body-md hover:bg-on-primary-fixed-variant transition-colors">Start Shopping</a>
+      </div>
+    </ng-template>
+  </div>
+</main>

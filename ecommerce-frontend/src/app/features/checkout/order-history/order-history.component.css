@@ -1,0 +1,41 @@
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.625rem;
+  border-radius: var(--radius-full);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+.badge-pending {
+  background-color: #fef3c7;
+  color: #92400e;
+}
+.badge-processing {
+  background-color: #dbeafe;
+  color: #1e40af;
+}
+.badge-shipped {
+  background-color: #e0e7ff;
+  color: #3730a3;
+}
+.badge-delivered {
+  background-color: #d1fae5;
+  color: #065f46;
+}
+.badge-cancelled {
+  background-color: #fde2e2;
+  color: #991b1b;
+}
+
+.loading-spinner {
+  width: 2rem;
+  height: 2rem;
+  border: 3px solid var(--color-surface-container);
+  border-top-color: var(--color-primary);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
