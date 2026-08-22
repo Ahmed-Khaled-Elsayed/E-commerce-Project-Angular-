@@ -1,0 +1,113 @@
+<!-- Admin Order List -->
+<div class="min-h-screen bg-surface">
+  <!-- Header -->
+  <header class="bg-inverse-surface text-inverse-on-surface">
+    <div class="max-w-[var(--spacing-container-max)] mx-auto px-[var(--spacing-gutter)] py-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <h1 class="text-2xl font-bold tracking-tight">Order Management</h1>
+          <p class="text-sm opacity-70 mt-1">View and manage customer orders</p>
+        </div>
+        <nav class="flex gap-2">
+          <a routerLink="/admin" class="nav-pill">Dashboard</a>
+          <a routerLink="/admin/products" class="nav-pill">Products</a>
+          <a routerLink="/admin/orders" class="nav-pill nav-pill-active">Orders</a>
+          <a routerLink="/products" class="nav-pill nav-pill-exit">← Store</a>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-[var(--spacing-container-max)] mx-auto px-[var(--spacing-gutter)] py-8">
+    <!-- Filter Tabs -->
+    <div class="flex flex-wrap gap-2 mb-6">
+      <button
+        *ngFor="let filter of filterOptions"
+        (click)="setFilter(filter)"
+        class="filter-tab"
+        [class.filter-tab-active]="activeFilter === filter"
+      >
+        {{ filter }}
+        <span class="filter-count">{{ getFilterCount(filter) }}</span>
+      </button>
+    </div>
+
+    <!-- Loading -->
+    <div *ngIf="isLoading" class="flex items-center justify-center py-20">
+      <div class="loading-spinner"></div>
+      <span class="ml-3 text-on-surface-variant">Loading orders...</span>
+    </div>
+
+    <!-- Empty state -->
+    <div *ngIf="!isLoading && filteredOrders.length === 0" class="text-center py-20">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-16 h-16 mx-auto text-outline-variant mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+      <p class="text-on-surface-variant text-lg">
+        {{ activeFilter === 'All' ? 'No orders yet' : 'No ' + activeFilter.toLowerCase() + ' orders' }}
+      </p>
+    </div>
+
+    <!-- Orders Table -->
+    <div *ngIf="!isLoading && filteredOrders.length > 0" class="card overflow-hidden">
+      <div class="overflow-x-auto">
+        <table class="w-full">
+          <thead>
+            <tr class="bg-surface-container-low/60">
+              <th class="th">Order ID</th>
+              <th class="th">Customer</th>
+              <th class="th">Items</th>
+              <th class="th text-right">Total</th>
+              <th class="th">Date</th>
+              <th class="th text-center">Status</th>
+              <th class="th text-center">Actions</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-outline-variant/20">
+            <tr *ngFor="let order of filteredOrders" class="table-row-hover">
+              <td class="td">
+                <span class="font-mono text-xs text-on-surface-variant">#{{ order._id.slice(-6).toUpperCase() }}</span>
+              </td>
+              <td class="td">
+                <div>
+                  <p class="font-medium text-sm text-on-surface">{{ order.user?.name || 'Unknown' }}</p>
+                  <p class="text-xs text-on-surface-variant">{{ order.user?.email || '-' }}</p>
+                </div>
+              </td>
+              <td class="td">
+                <p class="text-sm text-on-surface truncate max-w-[200px]" [title]="getOrderItemsSummary(order)">{{ getOrderItemsSummary(order) }}</p>
+                <p class="text-xs text-on-surface-variant">{{ order.items.length }} item(s)</p>
+              </td>
+              <td class="td text-right font-semibold text-sm">${{ order.totalPrice | number:'1.2-2' }}</td>
+              <td class="td">
+                <p class="text-sm text-on-surface">{{ order.createdAt | date:'MMM d, y' }}</p>
+                <p class="text-xs text-on-surface-variant">{{ order.createdAt | date:'h:mm a' }}</p>
+              </td>
+              <td class="td text-center">
+                <span class="badge {{ getStatusClass(order.status) }}">{{ order.status }}</span>
+              </td>
+              <td class="td text-center">
+                <div class="relative inline-block" [class.opacity-50]="updatingOrderId === order._id">
+                  <select
+                    [value]="order.status"
+                    (change)="updateStatus(order._id, $any($event.target).value)"
+                    [disabled]="updatingOrderId === order._id"
+                    class="status-select"
+                  >
+                    <option *ngFor="let status of statuses" [value]="status">{{ status }}</option>
+                  </select>
+                  <div *ngIf="updatingOrderId === order._id" class="absolute inset-0 flex items-center justify-center">
+                    <div class="loading-spinner-sm"></div>
+                  </div>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Result count -->
+      <div class="px-6 py-3 bg-surface-container-low/40 text-xs text-on-surface-variant">
+        Showing {{ filteredOrders.length }} of {{ orders.length }} orders
+      </div>
+    </div>
+  </main>
+</div>

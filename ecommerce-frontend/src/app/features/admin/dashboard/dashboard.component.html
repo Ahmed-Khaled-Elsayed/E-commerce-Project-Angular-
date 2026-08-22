@@ -1,0 +1,128 @@
+<!-- Admin Dashboard -->
+<div class="min-h-screen bg-surface">
+  <!-- Header -->
+  <header class="bg-inverse-surface text-inverse-on-surface">
+    <div class="max-w-[var(--spacing-container-max)] mx-auto px-[var(--spacing-gutter)] py-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <h1 class="text-2xl font-bold tracking-tight">Admin Dashboard</h1>
+          <p class="text-sm opacity-70 mt-1">Manage your store products and orders</p>
+        </div>
+        <nav class="flex gap-2">
+          <a routerLink="/admin" class="nav-pill nav-pill-active">Dashboard</a>
+          <a routerLink="/admin/products" class="nav-pill">Products</a>
+          <a routerLink="/admin/orders" class="nav-pill">Orders</a>
+          <a routerLink="/products" class="nav-pill nav-pill-exit">← Store</a>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-[var(--spacing-container-max)] mx-auto px-[var(--spacing-gutter)] py-8">
+    <!-- Loading state -->
+    <div *ngIf="isLoading" class="flex items-center justify-center py-20">
+      <div class="loading-spinner"></div>
+      <span class="ml-3 text-on-surface-variant">Loading dashboard...</span>
+    </div>
+
+    <div *ngIf="!isLoading">
+      <!-- Stats Cards -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+        <!-- Total Products -->
+        <div class="stat-card">
+          <div class="stat-icon bg-primary/10 text-primary">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+          </div>
+          <div>
+            <p class="stat-label">Total Products</p>
+            <p class="stat-value">{{ totalProducts }}</p>
+          </div>
+        </div>
+
+        <!-- Total Orders -->
+        <div class="stat-card">
+          <div class="stat-icon bg-secondary/10 text-secondary">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+          </div>
+          <div>
+            <p class="stat-label">Total Orders</p>
+            <p class="stat-value">{{ totalOrders }}</p>
+          </div>
+        </div>
+
+        <!-- Revenue -->
+        <div class="stat-card">
+          <div class="stat-icon bg-[#10b981]/10 text-[#10b981]">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          </div>
+          <div>
+            <p class="stat-label">Revenue</p>
+            <p class="stat-value">${{ totalRevenue | number:'1.2-2' }}</p>
+          </div>
+        </div>
+
+        <!-- Pending Orders -->
+        <div class="stat-card">
+          <div class="stat-icon bg-[#f59e0b]/10 text-[#f59e0b]">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          </div>
+          <div>
+            <p class="stat-label">Pending Orders</p>
+            <p class="stat-value">{{ pendingOrders }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Two Column Layout: Recent Orders & Low Stock -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <!-- Recent Orders -->
+        <div class="card">
+          <div class="card-header">
+            <h2 class="card-title">Recent Orders</h2>
+            <a routerLink="/admin/orders" class="text-sm text-primary font-medium hover:underline">View All →</a>
+          </div>
+          <div *ngIf="recentOrders.length === 0" class="p-6 text-center text-on-surface-variant">
+            No orders yet.
+          </div>
+          <div *ngIf="recentOrders.length > 0" class="divide-y divide-outline-variant/30">
+            <div *ngFor="let order of recentOrders" class="p-4 flex items-center justify-between hover:bg-surface-container-low/50 transition-colors">
+              <div>
+                <p class="font-medium text-sm text-on-surface">{{ order.user?.name || 'Unknown' }}</p>
+                <p class="text-xs text-on-surface-variant mt-0.5">{{ order.items.length }} item(s) · {{ order.createdAt | date:'MMM d, y' }}</p>
+              </div>
+              <div class="flex items-center gap-3">
+                <span class="font-semibold text-sm">${{ order.totalPrice | number:'1.2-2' }}</span>
+                <span class="badge {{ getStatusClass(order.status) }}">{{ order.status }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Low Stock Alert -->
+        <div class="card">
+          <div class="card-header">
+            <h2 class="card-title">Low Stock Alert</h2>
+            <a routerLink="/admin/products" class="text-sm text-primary font-medium hover:underline">Manage →</a>
+          </div>
+          <div *ngIf="lowStockProducts.length === 0" class="p-6 text-center text-on-surface-variant">
+            All products are well stocked! 🎉
+          </div>
+          <div *ngIf="lowStockProducts.length > 0" class="divide-y divide-outline-variant/30">
+            <div *ngFor="let product of lowStockProducts" class="p-4 flex items-center justify-between hover:bg-surface-container-low/50 transition-colors">
+              <div class="flex items-center gap-3">
+                <img [src]="product.image" [alt]="product.name" class="w-10 h-10 rounded-md object-cover bg-surface-container" />
+                <div>
+                  <p class="font-medium text-sm text-on-surface">{{ product.name }}</p>
+                  <p class="text-xs text-on-surface-variant">{{ product.category }}</p>
+                </div>
+              </div>
+              <span class="text-sm font-semibold" [class.text-error]="product.quantity <= 5" [class.text-[#f59e0b]]="product.quantity > 5">
+                {{ product.quantity }} left
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>

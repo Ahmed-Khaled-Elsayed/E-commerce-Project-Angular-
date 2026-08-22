@@ -1,0 +1,125 @@
+/* Product list styles */
+
+/* Reuse shared admin styles */
+.nav-pill {
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-full);
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  color: rgba(255, 255, 255, 0.65);
+}
+.nav-pill:hover {
+  color: white;
+  background-color: rgba(255, 255, 255, 0.08);
+}
+.nav-pill-active {
+  color: white;
+  background-color: rgba(255, 255, 255, 0.12);
+}
+.nav-pill-exit {
+  color: rgba(255, 255, 255, 0.5);
+}
+.nav-pill-exit:hover {
+  color: white;
+}
+
+.card {
+  background: white;
+  border-radius: var(--radius-lg);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1.25rem;
+  background-color: var(--color-primary);
+  color: var(--color-on-primary);
+  font-size: 0.875rem;
+  font-weight: 600;
+  border-radius: var(--radius-md);
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+.btn-primary:hover {
+  background-color: var(--color-on-primary-container);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 108, 73, 0.25);
+}
+
+/* Table styles */
+.th {
+  padding: 0.75rem 1.5rem;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-on-surface-variant);
+  text-align: left;
+  white-space: nowrap;
+}
+.td {
+  padding: 1rem 1.5rem;
+  vertical-align: middle;
+}
+.table-row-hover {
+  transition: background-color 0.15s ease;
+}
+.table-row-hover:hover {
+  background-color: var(--color-surface-container-low);
+}
+
+/* Action buttons */
+.action-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: var(--radius-sm);
+  transition: all 0.2s ease;
+}
+.action-btn-edit {
+  color: var(--color-primary);
+}
+.action-btn-edit:hover {
+  background-color: var(--color-primary);
+  color: white;
+}
+.action-btn-delete {
+  color: var(--color-error);
+}
+.action-btn-delete:hover {
+  background-color: var(--color-error);
+  color: white;
+}
+
+/* Loading spinner */
+.loading-spinner {
+  width: 2rem;
+  height: 2rem;
+  border: 3px solid var(--color-surface-container);
+  border-top-color: var(--color-primary);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Modal animation */
+.animate-modal {
+  animation: modalIn 0.2s ease-out;
+}
+@keyframes modalIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
