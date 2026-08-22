@@ -1,6 +1,9 @@
 # 🛒 Full-Stack E-commerce Project (Angular & Node.js/Express)
 
 Welcome to the team's graduation/training project. This document details the project structure, required features, and the distribution of tasks among the five team members to ensure a smooth and professional workflow.
+project Demo 
+
+https://drive.google.com/file/d/1Op_25rN7r9yiUO7KePzriBhnmW9PZxla/view?usp=sharing
 
 ---
 
