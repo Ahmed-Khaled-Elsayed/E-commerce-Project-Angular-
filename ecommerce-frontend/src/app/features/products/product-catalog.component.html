@@ -1,0 +1,57 @@
+<app-navbar></app-navbar>
+<main class="catalog-page">
+
+  <section class="catalog-intro">
+    <div>
+      <p class="eyebrow">Curated essentials</p>
+      <h1>Find something worth keeping.</h1>
+      <p class="intro-copy">Thoughtful products for everyday rituals, selected for quality and made easy to discover.</p>
+    </div>
+    <div class="catalog-mark">LC<span>/</span>26</div>
+  </section>
+
+  <section class="catalog-controls" aria-label="Catalog filters">
+    <label class="search-field">
+      <span class="material-symbols-outlined">search</span>
+      <input [(ngModel)]="search" (keyup.enter)="applyFilters()" placeholder="Search products" aria-label="Search products" />
+    </label>
+    <label class="select-field">
+      <span>Category</span>
+      <select [(ngModel)]="category" (change)="applyFilters()" aria-label="Filter by category">
+        <option value="">All categories</option>
+        @for (item of categories; track item) { <option [value]="item">{{ item }}</option> }
+      </select>
+    </label>
+    <button type="button" class="filter-button" (click)="applyFilters()">Search</button>
+  </section>
+
+  @if (cartError) { <div class="catalog-cart-error" role="alert">{{ cartError }}</div> }
+  @if (isLoading) {
+    <div class="state-message">Loading the collection...</div>
+  } @else if (errorMessage) {
+    <div class="state-message error">{{ errorMessage }} <button type="button" (click)="loadProducts()">Retry</button></div>
+  } @else if (!products.length) {
+    <div class="state-message">No products match those filters.</div>
+  } @else {
+    <section class="product-grid" aria-label="Products">
+      @for (product of products; track trackById($index, product)) {
+        <article class="product-card">
+          <a [routerLink]="['/products', product.id]" class="product-image-wrap">
+            <img [src]="product.image" [alt]="product.name" loading="lazy" />
+            <span class="view-product">View details <span class="material-symbols-outlined">arrow_outward</span></span>
+          </a>
+          <div class="product-info">
+            <div class="product-meta"><span>{{ product.category }}</span><span>{{ product.rating.rate | number:'1.1-1' }} / 5</span></div>
+            <h2><a [routerLink]="['/products', product.id]">{{ product.name }}</a></h2>
+            <div class="product-buy"><strong>{{ product.price | currency }}</strong><button type="button" (click)="addToCart(product)" [disabled]="addingProductId === product.id">{{ addingProductId === product.id ? 'Adding...' : (addedProductId === product.id ? 'Added' : 'Add to cart') }}</button></div>
+          </div>
+        </article>
+      }
+    </section>
+    <nav class="pagination" aria-label="Pagination">
+      <button type="button" (click)="changePage(page - 1)" [disabled]="page === 1" aria-label="Previous page"><span class="material-symbols-outlined">arrow_back</span></button>
+      <span>Page {{ page }}</span>
+      <button type="button" (click)="changePage(page + 1)" [disabled]="page >= totalPages" aria-label="Next page"><span class="material-symbols-outlined">arrow_forward</span></button>
+    </nav>
+  }
+</main>

@@ -6,36 +6,29 @@ import { Order } from '../../../shared/interfaces/order.interface';
 import { NavbarComponent } from '../../../shared/components/navbar/navbar.component';
 
 @Component({
-  selector: 'app-order-success',
+  selector: 'app-order-details',
   standalone: true,
   imports: [CommonModule, RouterLink, NavbarComponent],
-  templateUrl: './order-success.component.html',
-  styleUrl: './order-success.component.css'
+  templateUrl: './order-details.component.html',
+  styleUrl: './order-details.component.css'
 })
-export class OrderSuccessComponent implements OnInit {
+export class OrderDetailsComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly orderService = inject(OrderService);
-
   order: Order | null = null;
-  orderId: string | null = null;
   isLoading = true;
+  hasError = false;
 
   ngOnInit(): void {
-    this.orderId = this.route.snapshot.paramMap.get('orderId');
-
-    if (!this.orderId) {
-      this.isLoading = false;
-      return;
-    }
-
-    this.orderService.getOrderById(this.orderId).subscribe({
-      next: (order) => {
-        this.order = order;
-        this.isLoading = false;
-      },
-      error: () => {
-        this.isLoading = false;
-      }
+    const orderId = this.route.snapshot.paramMap.get('orderId');
+    if (!orderId) { this.isLoading = false; this.hasError = true; return; }
+    this.orderService.getOrderById(orderId).subscribe({
+      next: order => { this.order = order; this.isLoading = false; },
+      error: () => { this.hasError = true; this.isLoading = false; }
     });
+  }
+
+  getStatusClass(status: string): string {
+    return `status-${status.toLowerCase()}`;
   }
 }

@@ -21,6 +21,10 @@ export class ProductListComponent implements OnInit {
   isLoading = true;
   deleteConfirmId: string | null = null;
 
+  get productToDelete(): Product | undefined {
+    return this.products.find(product => product.id === this.deleteConfirmId);
+  }
+
   ngOnInit(): void {
     this.loadProducts();
   }

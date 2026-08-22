@@ -84,13 +84,12 @@ export class RegisterComponent {
     this.authService.register(payload).subscribe({
       next: (response) => {
         this.isLoading = false;
-        localStorage.setItem('token', response.token ?? '');
-        localStorage.setItem('user', JSON.stringify(response.user ?? {}));
-        this.router.navigate(['/products']);
+        this.router.navigate(['/auth/login']);
       },
-      error: () => {
+      error: (error) => {
         this.isLoading = false;
-        this.errorMessage = 'Registration failed. Please try again in a moment.';
+        this.errorMessage = error.error?.message || error.error?.data?.message ||
+          'Registration failed. Please try again in a moment.';
       }
     });
   }

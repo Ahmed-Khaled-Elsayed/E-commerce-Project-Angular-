@@ -1,0 +1,25 @@
+:host { display: block; }
+.details-page { max-width: 1280px; margin: auto; padding: 24px 32px 72px; }
+.details-nav { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #d4ded9; padding-bottom: 20px; }
+.brand { color: #006c49; font-size: 25px; font-weight: 700; text-decoration: none; }
+.back-link { display: flex; align-items: center; gap: 8px; color: #53615c; font-size: 14px; text-decoration: none; }
+.details-layout { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(320px, .95fr); gap: 9%; align-items: center; padding: 64px 5%; }
+.details-image { aspect-ratio: 1 / 1.08; background: #e7eee9; overflow: hidden; }
+.details-image img { width: 100%; height: 100%; object-fit: cover; }
+.eyebrow { color: #006c49; font-size: 12px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
+h1 { margin: 12px 0; color: #0b1c30; font-size: clamp(36px, 5vw, 62px); line-height: 1.05; font-weight: 600; }
+.price { margin: 0 0 20px; color: #006c49; font-size: 25px; font-weight: 700; }
+.rating { color: #68766f; font-size: 13px; }
+.stars { color: #d28b35; letter-spacing: .1em; }
+.description { margin: 30px 0; color: #53615c; font-size: 17px; line-height: 1.7; }
+.purchase-row { display: flex; gap: 12px; align-items: end; border-top: 1px solid #d4ded9; border-bottom: 1px solid #d4ded9; padding: 20px 0; }
+.purchase-row label { display: grid; gap: 8px; color: #53615c; font-size: 12px; text-transform: uppercase; letter-spacing: .08em; }
+.purchase-row input { width: 66px; border: 1px solid #b7c8be; padding: 13px 10px; color: #0b1c30; font: inherit; }
+.purchase-row button { flex: 1; border: 0; background: #006c49; color: white; padding: 15px 20px; font-weight: 700; cursor: pointer; }
+.purchase-row button:disabled { opacity: .6; cursor: wait; }
+.cart-error { margin: 14px 0 0; padding: 12px; color: #a52c26; background: #fff0ee; font-size: 13px; }
+.details-note { display: flex; gap: 10px; align-items: center; margin-top: 22px; color: #68766f; font-size: 13px; }
+.state { padding: 100px 0; text-align: center; color: #53615c; }
+.state a { color: #006c49; font-weight: 700; margin-left: 8px; }
+.error { color: #a52c26; }
+@media (max-width: 720px) { .details-page { padding: 18px 18px 52px; } .details-layout { display: block; padding: 38px 0; } .details-copy { padding-top: 34px; } }

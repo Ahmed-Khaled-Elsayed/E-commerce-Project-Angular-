@@ -1,0 +1,25 @@
+<nav class="store-nav" aria-label="Main navigation">
+  <div class="store-nav-inner">
+    <a routerLink="/products" class="store-brand">LuxeCart</a>
+    <div class="store-nav-links">
+      <a routerLink="/products" routerLinkActive="active">Shop</a>
+      <a routerLink="/checkout/orders" routerLinkActive="active">Orders</a>
+      <a *ngIf="isAdmin" routerLink="/admin" routerLinkActive="active"><span class="material-symbols-outlined admin-icon">admin_panel_settings</span> Admin</a>
+    </div>
+    <div class="store-nav-actions">
+      <a routerLink="/cart" routerLinkActive="active" class="icon-link" aria-label="Shopping cart" title="Shopping cart">
+        <span class="material-symbols-outlined">shopping_cart</span>
+        <span *ngIf="(totals | async)?.itemCount as count" class="cart-count">{{ count }}</span>
+      </a>
+      <div class="profile-menu">
+      <button type="button" (click)="toggleProfileMenu()" class="icon-link profile-trigger" aria-label="Profile menu" title="Profile menu" [attr.aria-expanded]="isProfileMenuOpen">
+        <span class="material-symbols-outlined">account_circle</span>
+      </button>
+      <div *ngIf="isProfileMenuOpen" class="profile-dropdown">
+        <a routerLink="/profile" (click)="isProfileMenuOpen = false"><span class="material-symbols-outlined">settings</span> Settings</a>
+        <button type="button" (click)="logout()"><span class="material-symbols-outlined">logout</span> Log out</button>
+      </div>
+      </div>
+    </div>
+  </div>
+</nav>

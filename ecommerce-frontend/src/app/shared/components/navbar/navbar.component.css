@@ -1,0 +1,14 @@
+:host { display: block; }
+.store-nav { width: 100%; background: #fff; border-bottom: 1px solid #cbd9d1; }
+.store-nav-inner { display: flex; align-items: center; justify-content: space-between; max-width: 1280px; min-height: 72px; margin: auto; padding: 0 24px; box-sizing: border-box; }
+.store-brand { color: #006c49; font-size: 28px; font-weight: 800; letter-spacing: -.03em; text-decoration: none; }
+.store-nav-links { display: flex; align-items: center; gap: 28px; margin-left: auto; margin-right: 28px; }
+.store-nav-links a { padding: 25px 0 22px; border-bottom: 2px solid transparent; color: #53615c; font-size: 14px; font-weight: 600; text-decoration: none; }
+.store-nav-links a:hover, .store-nav-links a.active { border-color: #006c49; color: #006c49; }
+.store-nav-links .admin-icon { margin-right: 4px; font-size: 17px; vertical-align: -4px; }
+.store-nav-actions { display: flex; align-items: center; gap: 8px; }
+.icon-link { position: relative; display: grid; place-items: center; width: 40px; height: 40px; color: #53615c; text-decoration: none; }
+.icon-link:hover, .icon-link.active { color: #006c49; }
+.profile-menu { position: relative; }.profile-trigger { border: 0; background: transparent; cursor: pointer; font: inherit; }.profile-dropdown { position: absolute; top: calc(100% + 10px); right: 0; z-index: 20; display: grid; min-width: 155px; padding: 7px; background: #fff; border: 1px solid #cbd9d1; border-radius: 10px; box-shadow: 0 12px 30px rgba(11, 28, 48, .14); }.profile-dropdown a, .profile-dropdown button { display: flex; align-items: center; gap: 9px; width: 100%; box-sizing: border-box; border: 0; border-radius: 7px; padding: 10px; color: #53615c; background: transparent; font: inherit; font-size: 13px; text-align: left; text-decoration: none; cursor: pointer; }.profile-dropdown a:hover, .profile-dropdown button:hover { color: #006c49; background: #eef4f0; }.profile-dropdown .material-symbols-outlined { font-size: 18px; }
+.cart-count { position: absolute; top: 1px; right: 0; display: grid; place-items: center; min-width: 16px; height: 16px; padding: 0 3px; border-radius: 99px; color: #00422b; background: #10b981; font-size: 10px; font-weight: 700; }
+@media (max-width: 640px) { .store-nav-inner { min-height: 64px; padding: 0 16px; }.store-brand { font-size: 23px; }.store-nav-links { gap: 12px; margin-right: 8px; }.store-nav-links a { padding: 21px 0 19px; font-size: 12px; }.store-nav-links .admin-icon { display: none; }.icon-link { width: 34px; }.store-nav-actions { gap: 0; } }

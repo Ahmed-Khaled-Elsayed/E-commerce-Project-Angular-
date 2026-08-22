@@ -15,7 +15,8 @@ export interface Product {
 }
 
 export interface ProductApiModel {
-  _id: string;
+  _id?: string;
+  id?: number;
   title: string;
   price: number;
   description: string;

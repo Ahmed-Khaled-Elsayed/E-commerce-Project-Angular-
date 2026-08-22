@@ -5,6 +5,7 @@ import { PRODUCTS_API } from '../env';
 import { Product, ProductApiModel, ProductInput, ProductQueryParams } from '../../shared/interfaces/product.interface';
 
 interface ProductApiPayload {
+  id?: number;
   title?: string;
   price?: number;
   description?: string;
@@ -28,32 +29,35 @@ export class ProductService {
     if (query.limit) params = params.set('limit', query.limit);
 
     return this.http
-      .get<ProductApiModel[]>(this.baseUrl, { params })
-      .pipe(map(products => products.map(product => this.toProduct(product))));
+      .get<{ data?: { data?: ProductApiModel[] } }>(`${this.baseUrl}/getAllProducts`, { params })
+      .pipe(map(response => (response.data?.data ?? []).map(product => this.toProduct(product))));
   }
 
   getById(id: string): Observable<Product> {
     return this.http
-      .get<ProductApiModel>(`${this.baseUrl}/${id}`)
-      .pipe(map(product => this.toProduct(product)));
+      .get<{ data?: { data?: ProductApiModel } }>(`${this.baseUrl}/${id}`)
+      .pipe(map(response => this.toProduct(response.data?.data as ProductApiModel)));
   }
 
   getByCategory(category: string): Observable<Product[]> {
     return this.http
-      .get<ProductApiModel[]>(`${this.baseUrl}/category/${category}`)
-      .pipe(map(products => products.map(product => this.toProduct(product))));
+      .get<{ data?: { data?: ProductApiModel[] } }>(`${this.baseUrl}/getAllProducts`, {
+        params: { category }
+      })
+      .pipe(map(response => (response.data?.data ?? [])
+        .filter(product => product.category === category)
+        .map(product => this.toProduct(product))));
   }
 
-  create(input: ProductInput): Observable<Product> {
+  create(input: ProductInput): Observable<unknown> {
     return this.http
-      .post<ProductApiModel>(this.baseUrl, this.toApiPayload(input))
-      .pipe(map(product => this.toProduct(product)));
+      .post<unknown>(`${this.baseUrl}/insertProduct`, this.toApiPayload(input));
   }
 
   update(id: string, input: Partial<ProductInput>): Observable<Product> {
     return this.http
       .patch<ProductApiModel>(`${this.baseUrl}/${id}`, this.toApiPayload(input))
-      .pipe(map(product => this.toProduct(product)));
+      .pipe(map(response => this.toProduct((response as any).data?.data ?? response)));
   }
 
   delete(id: string): Observable<void> {
@@ -62,7 +66,7 @@ export class ProductService {
 
   private toProduct(raw: ProductApiModel): Product {
     return {
-      id: raw._id,
+      id: String(raw.id ?? raw._id),
       name: raw.title,
       price: raw.price,
       description: raw.description,
@@ -75,6 +79,7 @@ export class ProductService {
 
   private toApiPayload(input: Partial<ProductInput>): ProductApiPayload {
     const payload: ProductApiPayload = {};
+    payload.id = Date.now();
     if (input.name !== undefined) payload.title = input.name;
     if (input.price !== undefined) payload.price = input.price;
     if (input.description !== undefined) payload.description = input.description;

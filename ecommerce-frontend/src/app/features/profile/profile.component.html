@@ -1,0 +1,25 @@
+<app-navbar></app-navbar>
+<main class="profile-page">
+  <section class="profile-card">
+    <div class="profile-avatar"><span class="material-symbols-outlined">account_circle</span></div>
+    <p class="eyebrow">Your account</p>
+    <h1>{{ profile.name }}</h1>
+    <p class="profile-email">{{ profile.email }}</p>
+    <div class="profile-role"><span class="material-symbols-outlined">verified_user</span> {{ profile.role }}</div>
+    <div class="profile-feedback success" *ngIf="successMessage">{{ successMessage }}</div>
+    <div class="profile-feedback error" *ngIf="errorMessage">{{ errorMessage }}</div>
+    <button *ngIf="!isEditing" type="button" class="edit-profile-button" (click)="startEditing()"><span class="material-symbols-outlined">edit</span> Edit profile</button>
+    <button *ngIf="!isEditing" type="button" class="logout-button" (click)="logout()"><span class="material-symbols-outlined">logout</span> Log out</button>
+    <form *ngIf="isEditing" [formGroup]="profileForm" (ngSubmit)="saveProfile()" class="profile-form">
+      <label>Name<input formControlName="name" type="text" autocomplete="name" /></label>
+      <label>Email<input formControlName="email" type="email" autocomplete="email" /></label>
+      <label>Current password<input formControlName="password" type="password" autocomplete="current-password" /><small class="field-error" *ngIf="profileForm.controls.password.touched && profileForm.controls.password.hasError('required')">Current password is required to save changes.</small></label>
+      <label>New password <span>(optional)</span><input formControlName="newPassword" type="password" autocomplete="new-password" /></label>
+      <div class="form-actions"><button type="button" class="cancel-button" (click)="cancelEditing()">Cancel</button><button type="submit" class="save-button" [disabled]="isSaving">{{ isSaving ? 'Saving...' : 'Save changes' }}</button></div>
+    </form>
+    <div class="profile-links">
+      <a routerLink="/checkout/orders"><span class="material-symbols-outlined">receipt_long</span> View my orders <span class="material-symbols-outlined">arrow_forward</span></a>
+      <a routerLink="/products"><span class="material-symbols-outlined">storefront</span> Continue shopping <span class="material-symbols-outlined">arrow_forward</span></a>
+    </div>
+  </section>
+</main>

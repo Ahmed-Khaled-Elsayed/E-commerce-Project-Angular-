@@ -5,6 +5,7 @@ import { CheckoutRoutingModule } from './checkout-routing.module';
 import { CheckoutComponent } from './checkout.component';
 import { OrderSuccessComponent } from './order-success/order-success.component';
 import { OrderHistoryComponent } from './order-history/order-history.component';
+import { OrderDetailsComponent } from './order-details/order-details.component';
 
 @NgModule({
   declarations: [],
@@ -13,7 +14,8 @@ import { OrderHistoryComponent } from './order-history/order-history.component';
     CheckoutRoutingModule,
     CheckoutComponent,
     OrderSuccessComponent,
-    OrderHistoryComponent
+    OrderHistoryComponent,
+    OrderDetailsComponent
   ]
 })
 export class CheckoutModule { }

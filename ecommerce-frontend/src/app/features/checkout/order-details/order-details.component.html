@@ -1,0 +1,37 @@
+<app-navbar></app-navbar>
+
+<main class="order-details-page">
+  @if (isLoading) {
+    <div class="state"><span class="loading-spinner"></span><p>Loading order details...</p></div>
+  } @else if (hasError || !order) {
+    <div class="state error"><span class="material-symbols-outlined">error</span><h1>Order not found</h1><p>We could not load this order for your account.</p><a routerLink="/checkout/orders">Back to my orders</a></div>
+  } @else {
+    <header class="details-heading">
+      <div><p class="eyebrow">Purchase details</p><h1>Order #{{ order._id }}</h1><p>Placed {{ order.createdAt | date:'longDate' }}</p></div>
+      <span class="status" [ngClass]="getStatusClass(order.status)">{{ order.status }}</span>
+    </header>
+    <div class="details-grid">
+      <section class="items-panel">
+        <h2>Items in this order</h2>
+        @for (item of order.items; track item.product) {
+          <article class="order-item">
+            <div class="item-image"><img *ngIf="item.image" [src]="item.image" [alt]="item.name"><span *ngIf="!item.image" class="material-symbols-outlined">inventory_2</span></div>
+            <div class="item-copy"><h3>{{ item.name }}</h3><p>Quantity: {{ item.quantity }}</p></div>
+            <strong>{{ item.price * item.quantity | currency }}</strong>
+          </article>
+        }
+      </section>
+      <aside class="summary-panel">
+        <h2>Order summary</h2>
+        <div><span>Subtotal</span><strong>{{ order.totalPrice | currency }}</strong></div>
+        <div><span>Shipping</span><strong class="free">Free</strong></div>
+        <div class="summary-total"><span>Total paid</span><strong>{{ order.totalPrice | currency }}</strong></div>
+        <h2 class="shipping-title">Shipping details</h2>
+        <p>{{ order.shippingAddress.fullName || 'Customer' }}</p>
+        <p>{{ order.shippingAddress.address || 'Address provided at checkout' }}</p>
+        <p>{{ order.shippingAddress.city }} {{ order.shippingAddress.postalCode }}</p>
+        <p>{{ order.shippingAddress.country }}</p>
+      </aside>
+    </div>
+  }
+</main>

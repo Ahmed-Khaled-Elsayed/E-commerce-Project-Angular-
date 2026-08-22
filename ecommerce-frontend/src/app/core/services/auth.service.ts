@@ -18,4 +18,8 @@ export class AuthService {
   register(payload: RegisterPayload): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${this.baseUrl}/InsertUserS`, payload);
   }
+
+  updateProfile(payload: { name: string; email: string; password: string; newPassword?: string }): Observable<AuthResponse> {
+    return this.http.patch<AuthResponse>(`${this.baseUrl}/profile`, payload);
+  }
 }

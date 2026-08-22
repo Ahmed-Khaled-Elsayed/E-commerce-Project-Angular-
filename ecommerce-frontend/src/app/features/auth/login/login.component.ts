@@ -63,7 +63,16 @@ export class LoginComponent {
         }
         localStorage.setItem('token', token);
         localStorage.setItem('user', JSON.stringify(response.user ?? {}));
-        this.router.navigate(['/products']);
+        let isAdmin = false;
+        try {
+          const payload = JSON.parse(atob(token.split('.')[1]));
+          isAdmin = payload.role === 'admin';
+        } catch {
+          this.errorMessage = 'Login succeeded but the access token is invalid.';
+          localStorage.removeItem('token');
+          return;
+        }
+        this.router.navigate([isAdmin ? '/admin' : '/products']);
       },
       error: () => {
         this.isLoading = false;

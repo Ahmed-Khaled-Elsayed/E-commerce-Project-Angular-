@@ -23,5 +23,7 @@ export interface AuthResponse {
   status?: string;
   data?: {
     data?: string;
+    user?: AuthUser;
+    token?: string;
   };
 }

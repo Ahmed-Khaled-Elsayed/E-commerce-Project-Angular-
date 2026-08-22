@@ -1,29 +1,4 @@
-<nav class="fixed top-0 w-full z-50 bg-surface-container-lowest border-b border-outline-variant">
-  <div class="flex justify-between items-center px-gutter py-sm max-w-container-max mx-auto">
-    <a routerLink="/products" class="text-display-lg-mobile font-extrabold text-primary">LuxeCart</a>
-
-    <div class="flex items-center gap-md">
-      <div class="hidden md:flex items-center bg-surface-container-low px-sm py-xs rounded-lg border border-outline-variant">
-        <span class="material-symbols-outlined text-on-surface-variant mr-xs">search</span>
-        <input class="bg-transparent border-none focus:ring-0 outline-none text-body-md text-on-surface" placeholder="Search products..." type="text" />
-      </div>
-
-      <div class="flex items-center gap-sm">
-        <div class="hidden md:flex gap-md mr-md">
-          <a routerLink="/products" class="text-on-surface-variant hover:text-primary transition-colors text-body-md">Home</a>
-          <a routerLink="/products" class="text-on-surface-variant hover:text-primary transition-colors text-body-md">Shop</a>
-        </div>
-        <button type="button" class="flex items-center justify-center p-xs relative text-primary font-bold border-b-2 border-primary pb-1">
-          <span class="material-symbols-outlined">shopping_cart</span>
-          <span *ngIf="(totals | async)?.itemCount as count" class="absolute -top-1 -right-1 bg-primary-container text-on-primary-container text-[10px] w-4 h-4 flex items-center justify-center rounded-full">{{ count }}</span>
-        </button>
-        <button type="button" class="flex items-center justify-center p-xs text-on-surface-variant hover:text-primary transition-colors">
-          <span class="material-symbols-outlined">account_circle</span>
-        </button>
-      </div>
-    </div>
-  </div>
-</nav>
+<app-navbar></app-navbar>
 
 <main class="pt-xl pb-xl px-gutter max-w-container-max mx-auto mt-lg">
   <div class="mb-lg" *ngIf="totals | async as totals">

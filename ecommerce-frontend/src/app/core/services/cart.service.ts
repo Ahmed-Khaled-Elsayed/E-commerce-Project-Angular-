@@ -1,16 +1,19 @@
-import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Injectable, inject } from '@angular/core';
 import { BehaviorSubject, Observable, map } from 'rxjs';
 import { CartItem, CartTotals } from '../../shared/interfaces/cart.interface';
 import { Product } from '../../shared/interfaces/product.interface';
+import { CART_API } from '../env';
 
-const STORAGE_KEY = 'luxecart_cart';
 const TAX_RATE = 0.08;
 
 @Injectable({
   providedIn: 'root'
 })
 export class CartService {
-  private readonly itemsSubject = new BehaviorSubject<CartItem[]>(this.loadFromStorage());
+  private readonly http = inject(HttpClient);
+  private readonly itemsSubject = new BehaviorSubject<CartItem[]>([]);
+  private readonly baseUrl = CART_API;
   readonly items = this.itemsSubject.asObservable();
   readonly totals: Observable<CartTotals> = this.items.pipe(map(items => this.calculateTotals(items)));
 
@@ -22,23 +25,18 @@ export class CartService {
     return this.calculateTotals(this.currentItems);
   }
 
-  addItem(product: Product, quantity = 1): void {
-    const items = [...this.itemsSubject.value];
-    const existing = items.find(item => item.productId === product.id);
+  load(): void {
+    this.http.get<{ data?: { data?: any[] } }>(this.baseUrl).subscribe({
+      next: response => this.setItems(response.data?.data ?? [])
+    });
+  }
 
-    if (existing) {
-      existing.quantity += quantity;
-    } else {
-      items.push({
-        productId: product.id,
-        name: product.name,
-        price: product.price,
-        image: product.image,
-        quantity
-      });
-    }
-
-    this.updateItems(items);
+  addItem(product: Product, quantity = 1): Observable<void> {
+    return this.http.post<{ data?: { data?: any[] } }>(this.baseUrl, {
+      productId: Number(product.id), quantity
+    }).pipe(map(response => {
+      this.setItems(response.data?.data ?? []);
+    }));
   }
 
   updateQuantity(productId: string, quantity: number): void {
@@ -47,19 +45,21 @@ export class CartService {
       return;
     }
 
-    const items = this.itemsSubject.value.map(item =>
-      item.productId === productId ? { ...item, quantity } : item
-    );
-    this.updateItems(items);
+    this.http.patch<{ data?: { data?: any[] } }>(`${this.baseUrl}/${productId}`, { quantity }).subscribe({
+      next: response => this.setItems(response.data?.data ?? [])
+    });
   }
 
   removeItem(productId: string): void {
-    const items = this.itemsSubject.value.filter(item => item.productId !== productId);
-    this.updateItems(items);
+    this.http.delete<{ data?: { data?: any[] } }>(`${this.baseUrl}/${productId}`).subscribe({
+      next: response => this.setItems(response.data?.data ?? [])
+    });
   }
 
   clear(): void {
-    this.updateItems([]);
+    this.http.delete<{ data?: { data?: any[] } }>(this.baseUrl).subscribe({
+      next: response => this.setItems(response.data?.data ?? [])
+    });
   }
 
   private calculateTotals(items: CartItem[]): CartTotals {
@@ -70,17 +70,14 @@ export class CartService {
     return { itemCount, subtotal, tax, total: subtotal + tax };
   }
 
-  private updateItems(items: CartItem[]): void {
+  private setItems(rawItems: any[]): void {
+    const items = rawItems.map(item => ({
+      productId: String(item.productId ?? item.id),
+      name: item.name ?? item.title ?? '',
+      price: Number(item.price) || 0,
+      image: item.image ?? '',
+      quantity: Number(item.quantity) || 0
+    }));
     this.itemsSubject.next(items);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
-  }
-
-  private loadFromStorage(): CartItem[] {
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      return raw ? JSON.parse(raw) : [];
-    } catch {
-      return [];
-    }
   }
 }
