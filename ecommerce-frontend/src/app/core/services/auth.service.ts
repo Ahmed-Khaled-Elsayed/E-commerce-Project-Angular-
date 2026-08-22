@@ -16,6 +16,6 @@ export class AuthService {
   }
 
   register(payload: RegisterPayload): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.baseUrl}/register`, payload);
+    return this.http.post<AuthResponse>(`${this.baseUrl}/InsertUserS`, payload);
   }
 }

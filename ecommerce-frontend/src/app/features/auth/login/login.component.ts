@@ -56,7 +56,12 @@ export class LoginComponent {
     this.authService.login({ email, password }).subscribe({
       next: (response) => {
         this.isLoading = false;
-        localStorage.setItem('token', response.token ?? '');
+        const token = response.token ?? response.data?.data;
+        if (!token) {
+          this.errorMessage = 'Login succeeded but no access token was returned.';
+          return;
+        }
+        localStorage.setItem('token', token);
         localStorage.setItem('user', JSON.stringify(response.user ?? {}));
         this.router.navigate(['/products']);
       },

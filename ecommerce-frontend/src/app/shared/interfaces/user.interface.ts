@@ -20,4 +20,8 @@ export interface AuthResponse {
   message: string;
   token?: string;
   user?: AuthUser;
+  status?: string;
+  data?: {
+    data?: string;
+  };
 }
